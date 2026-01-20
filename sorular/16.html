@@ -75,18 +75,22 @@
       margin-bottom: 10px;
       display: block;
     }
+
+    /* Durum Kutuları Kenar Renkleri */
     .status-correct {
-      color: #4CAF50;
       border-left: 5px solid #4CAF50;
+      background-color: #e8f5e9;
+      border-color: #c8e6c9;
     }
     .status-wrong {
-      color: #d32f2f;
       border-left: 5px solid #d32f2f;
+      background-color: #ffebee;
+      border-color: #ffcdd2;
     }
 
     #feedbackText {
       white-space: pre-wrap;
-      color: #555;
+      font-weight: bold; /* TÜM FEEDBACK METNİ KALIN */
     }
 
     /* SONRAKİ SORU BUTONU */
@@ -156,11 +160,17 @@
     const nextUrl = "17.html"; // Sonraki soru dosyası
     const STORAGE_KEY = "quizLogs";
 
+    // Ortak Bilişsel Bilgi (Siyah ve Kalın olacak)
+    const commonCognitive = "⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir.";
+    
+    // Ortak Duyuşsal Bilgi (Turuncu ve Kalın olacak)
+    const commonAffective = "Dikkatini verirsen materyal türleri ile ilgili olan bu soruda doğru yanıtı bulabileceğinden eminim!";
+
     // 16. Soruya özel feedback metinleri
     const feedbackMap = {
       A: {
         type: "affective",
-        message: "Dikkatini verirsen materyal türleri ile ilgili olan bu soruda doğru yanıtı bulabileceğinden eminim!\n\n⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
+        message: commonAffective + "\n\n" + commonCognitive
       },
       B: {
         type: "correct",
@@ -168,15 +178,15 @@
       },
       C: {
         type: "affective",
-        message: "Dikkatini verirsen materyal türleri ile ilgili olan bu soruda doğru yanıtı bulabileceğinden eminim!\n\n⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
+        message: commonAffective + "\n\n" + commonCognitive
       },
       D: {
-        type: "cognitive",
-        message: "Dikkatini verirsen materyal türleri ile ilgili olan bu soruda doğru yanıtı bulabileceğinden eminim!\n\n⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
+        type: "affective", 
+        message: commonAffective + "\n\n" + commonCognitive
       },
       E: {
-        type: "cognitive",
-        message: "Dikkatini verirsen materyal türleri ile ilgili olan bu soruda doğru yanıtı bulabileceğinden eminim!\n\n⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
+        type: "affective", 
+        message: commonAffective + "\n\n" + commonCognitive
       }
     };
 
@@ -210,20 +220,40 @@
       const fbTitle = document.getElementById('feedbackTitle');
       const fbText = document.getElementById('feedbackText');
 
-      fbText.textContent = fb.message;
+      fbText.innerHTML = "";
 
       if (isCorrect) {
+        // --- DOĞRU CEVAP: YEŞİL KUTU, MAVİ VE KALIN YAZI ---
         fbTitle.textContent = "Doğru Yanıt!";
-        fbTitle.style.color = "#2e7d32";
+        fbTitle.style.color = "#2e7d32"; 
+        
         fbArea.className = "status-correct";
-        fbArea.style.backgroundColor = "#e8f5e9";
-        fbArea.style.borderColor = "#c8e6c9";
+        
+        // Mavi ve Kalın Metin
+        fbText.innerHTML = `<span style="color: #0277bd; font-weight: bold;">${fb.message}</span>`;
+
       } else {
+        // --- YANLIŞ CEVAP: KIRMIZI KUTU, TURUNCU/SİYAH VE KALIN YAZI ---
         fbTitle.textContent = "Yanlış Yanıt!";
         fbTitle.style.color = "#c62828";
+        
         fbArea.className = "status-wrong";
-        fbArea.style.backgroundColor = "#ffebee";
-        fbArea.style.borderColor = "#ffcdd2";
+
+        // Metni böl ve renklendir
+        const parts = fb.message.split("\n\n");
+
+        if (parts.length > 1) {
+            // 1. Kısım (Duyuşsal) -> Turuncu ve Kalın
+            const affectiveSpan = `<div style="color: #ef6c00; font-weight: bold; margin-bottom: 8px;">${parts[0]}</div>`;
+            
+            // 2. Kısım (Bilişsel) -> Siyah ve Kalın
+            const cognitiveText = parts.slice(1).join("<br><br>"); 
+            const cognitiveSpan = `<div style="color: #333; font-weight: bold;">${cognitiveText}</div>`;
+            
+            fbText.innerHTML = affectiveSpan + cognitiveSpan;
+        } else {
+            fbText.innerHTML = `<span style="color: #ef6c00; font-weight: bold;">${fb.message}</span>`;
+        }
       }
 
       fbArea.style.display = "block";
