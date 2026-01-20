@@ -75,18 +75,22 @@
       margin-bottom: 10px;
       display: block;
     }
+
+    /* Durum Kutuları Kenar Renkleri */
     .status-correct {
-      color: #4CAF50;
       border-left: 5px solid #4CAF50;
+      background-color: #e8f5e9;
+      border-color: #c8e6c9;
     }
     .status-wrong {
-      color: #d32f2f;
       border-left: 5px solid #d32f2f;
+      background-color: #ffebee;
+      border-color: #ffcdd2;
     }
 
     #feedbackText {
       white-space: pre-wrap;
-      color: #555;
+      font-weight: 500;
     }
 
     /* SONRAKİ SORU BUTONU */
@@ -211,20 +215,42 @@
       const fbTitle = document.getElementById('feedbackTitle');
       const fbText = document.getElementById('feedbackText');
 
-      fbText.textContent = fb.message;
+      // İçeriği temizle
+      fbText.innerHTML = "";
 
       if (isCorrect) {
+        // --- DOĞRU CEVAP: YEŞİL KUTU, MAVİ YAZI ---
         fbTitle.textContent = "Doğru Yanıt!";
-        fbTitle.style.color = "#2e7d32";
+        fbTitle.style.color = "#2e7d32"; // Yeşil Başlık
+        
         fbArea.className = "status-correct";
-        fbArea.style.backgroundColor = "#e8f5e9";
-        fbArea.style.borderColor = "#c8e6c9";
+        
+        // Mavi metin
+        fbText.innerHTML = `<span style="color: #0277bd;">${fb.message}</span>`;
+
       } else {
+        // --- YANLIŞ CEVAP: KIRMIZI KUTU, TURUNCU/SİYAH AYRIMLI YAZI ---
         fbTitle.textContent = "Yanlış Yanıt!";
-        fbTitle.style.color = "#c62828";
+        fbTitle.style.color = "#c62828"; // Kırmızı Başlık
+        
         fbArea.className = "status-wrong";
-        fbArea.style.backgroundColor = "#ffebee";
-        fbArea.style.borderColor = "#ffcdd2";
+
+        // Metni \n\n (iki satır) karakterinden böl
+        const parts = fb.message.split("\n\n");
+
+        if (parts.length > 1) {
+            // 1. Kısım: Duyuşsal -> Turuncu
+            const affectiveSpan = `<div style="color: #ef6c00; margin-bottom: 8px;">${parts[0]}</div>`;
+            
+            // 2. Kısım: Bilişsel (Emoji ile başlayan) -> Siyah
+            const cognitiveText = parts.slice(1).join("<br><br>"); 
+            const cognitiveSpan = `<div style="color: #333;">${cognitiveText}</div>`;
+            
+            fbText.innerHTML = affectiveSpan + cognitiveSpan;
+        } else {
+            // Eğer bölünemezse varsayılan turuncu
+            fbText.innerHTML = `<span style="color: #ef6c00;">${fb.message}</span>`;
+        }
       }
 
       fbArea.style.display = "block";
