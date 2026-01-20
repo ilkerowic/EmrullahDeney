@@ -12,7 +12,15 @@
       background-color: #f9f9f9;
       color: #333;
     }
-    h1 { margin-bottom: 30px; }
+    h1 { margin-bottom: 10px; }
+
+    /* Katılımcı İsmi Stili */
+    #participantDisplay {
+      font-size: 24px;
+      color: #0077cc;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
 
     /* Skor Kutusu */
     .result-box {
@@ -97,6 +105,8 @@
 <body>
 
   <h1>Çalışma Sonuçları</h1>
+  
+  <div id="participantDisplay"></div>
 
   <div class="result-box">
     <p>Toplam Doğru Sayınız</p>
@@ -117,10 +127,17 @@
   <script>
     const STORAGE_KEY = "quizLogs";
 
+    // --- İsim Gösterme ---
+    const participantName = localStorage.getItem('currentParticipant');
+    if (participantName) {
+      document.getElementById('participantDisplay').textContent = `Sayın ${participantName}`;
+    }
+
     function goHome() {
-      // Projenin ana giriş sayfası neyse oraya yönlendirir.
-      // Eğer doğrudan 1. soruya dönmek istersen '1.html' yapabilirsin.
-      window.location.href = '1.html'; 
+      // index.html sayfasına yönlendirir (dosya yapına göre "../index.html" olabilir)
+      // Eğer klasör yapın "sorular" içindeyse bir üst dizine çıkması gerekebilir.
+      // Şimdilik varsayılan olarak ana dizine dönüş veriyorum:
+      window.location.href = '../index.html'; 
     }
 
     function loadLogs() {
@@ -141,8 +158,10 @@
     function resetLogs() {
       if (!confirm("Tüm kayıtları silip en başa dönmek istediğinize emin misiniz?")) return;
       localStorage.removeItem(STORAGE_KEY);
-      // Sıfırlayınca 1. soruya atalım
-      window.location.href = "1.html";
+      localStorage.removeItem('currentParticipant'); // İsteğe bağlı: İsmi de silebilirsin
+      
+      // Sıfırlayınca ana sayfaya atalım
+      window.location.href = "../index.html";
     }
 
     // --- Ana İşleyiş ---
