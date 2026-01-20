@@ -5,7 +5,7 @@
   <title>1. Soru</title>
   <style>
     body {
-      font-family: "Segoe UI", Arial, sans-serif; /* Biraz daha modern font */
+      font-family: "Segoe UI", Arial, sans-serif;
       max-width: 800px;
       margin: 40px auto;
       line-height: 1.6;
@@ -27,7 +27,7 @@
       margin-bottom: 10px;
       padding: 12px 15px;
       border-radius: 8px;
-      border: 2px solid #e0e0e0; /* Kenarlık belirginleştirildi */
+      border: 2px solid #e0e0e0;
       background: #fff;
       cursor: pointer;
       text-align: left;
@@ -44,7 +44,7 @@
       color: #888;
     }
 
-    /* Seçilen Şık İşaretlemeleri (JS ile eklenecek sınıflar) */
+    /* Seçilen Şık İşaretlemeleri */
     .options button.selected-correct {
       border-color: #4CAF50;
       background-color: #e8f5e9;
@@ -60,7 +60,7 @@
 
     /* FEEDBACK (GERİ BİLDİRİM) ALANI */
     #feedbackArea {
-      display: none; /* Başlangıçta gizli */
+      display: none;
       margin-top: 20px;
       padding: 20px;
       border-radius: 8px;
@@ -69,34 +69,38 @@
       animation: slideDown 0.3s ease-out;
     }
     
-    /* Geri Bildirim Başlıkları */
     #feedbackTitle {
       font-size: 1.2em;
       font-weight: bold;
       margin-bottom: 10px;
       display: block;
     }
-    .status-correct {
-      color: #4CAF50; /* Yeşil */
-      border-left: 5px solid #4CAF50;
-    }
-    .status-wrong {
-      color: #d32f2f; /* Kırmızı */
-      border-left: 5px solid #d32f2f;
+    
+    /* Metin stilleri JS içinde dinamik atanacak ama temel ayar: */
+    #feedbackText {
+      white-space: pre-wrap;
+      font-weight: 500;
     }
 
-    #feedbackText {
-      white-space: pre-wrap; /* Satır sonlarını korur */
-      color: #555;
+    /* Durum Kutuları Kenar Renkleri */
+    .status-correct {
+      border-left: 5px solid #4CAF50;
+      background-color: #e8f5e9;
+      border-color: #c8e6c9;
+    }
+    .status-wrong {
+      border-left: 5px solid #d32f2f;
+      background-color: #ffebee;
+      border-color: #ffcdd2;
     }
 
     /* SONRAKİ SORU BUTONU */
     #nextButtonContainer {
-      display: none; /* Başlangıçta gizli */
+      display: none;
       margin-top: 20px;
     }
     #btnNext {
-      background-color: #1976d2; /* Mavi tonu */
+      background-color: #1976d2;
       color: white;
       border: none;
       padding: 12px 25px;
@@ -155,7 +159,10 @@
     const nextUrl = "2.html"; 
     const STORAGE_KEY = "quizLogs";
 
-    // Feedback içeriği (Senin verilerin)
+    // Feedback içeriği
+    // Yanlış cevaplarda metinleri \n\n ile ayırdık.
+    // İlk kısım (Affective) -> Turuncu
+    // İkinci kısım (Cognitive/Emoji) -> Siyah
     const feedbackMap = {
       A: {
         type: "correct",
@@ -163,47 +170,46 @@
       },
       B: {
         type: "affective",
-        message: "Yanlış bir cevapla başladın ama moralini bozma, dikkatini dağıtan bir şey olmuş olabilir! Açıklamaya odaklanmanı öneriyorum.\n\nGüneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
+        message: "Yanlış bir cevapla başladın ama moralini bozma, dikkatini dağıtan bir şey olmuş olabilir! Açıklamaya odaklanmanı öneriyorum.\n\n⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
       },
       C: {
         type: "affective",
-        message: "Yanlış bir cevapla başladın ama moralini bozma, dikkatini dağıtan bir şey olmuş olabilir! Açıklamaya odaklanmanı öneriyorum.\n\nGüneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
+        message: "Yanlış bir cevapla başladın ama moralini bozma, dikkatini dağıtan bir şey olmuş olabilir! Açıklamaya odaklanmanı öneriyorum.\n\n⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
       },
       D: {
         type: "cognitive",
-        message: "Yanlış bir cevapla başladın ama moralini bozma, dikkatini dağıtan bir şey olmuş olabilir! Açıklamaya odaklanmanı öneriyorum.\n\nGüneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
+        message: "Yanlış bir cevapla başladın ama moralini bozma, dikkatini dağıtan bir şey olmuş olabilir! Açıklamaya odaklanmanı öneriyorum.\n\n⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
       },
       E: {
         type: "cognitive",
-        message: "Yanlış bir cevapla başladın ama moralini bozma, dikkatini dağıtan bir şey olmuş olabilir! Açıklamaya odaklanmanı öneriyorum.\n\nGüneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
+        message: "Yanlış bir cevapla başladın ama moralini bozma, dikkatini dağıtan bir şey olmuş olabilir! Açıklamaya odaklanmanı öneriyorum.\n\n⁉️💡Güneş sisteminin nasıl çalıştığını hareketli olarak göstermek isteyen bir öğretmen, video gibi hem görsel hem işitsel öğretim materyallerini ve modelleri kullanabilir."
       }
     };
 
     let answered = false;
 
     function handleAnswer(optionKey) {
-      if (answered) return; // Zaten cevaplandıysa tekrar tıklatmayalım
+      if (answered) return;
       answered = true;
 
       const fb = feedbackMap[optionKey];
       if (!fb) return;
 
-      // 1. Tüm butonları kilitle (tekrar basılmasın)
+      // 1. Tüm butonları kilitle
       const buttons = document.querySelectorAll('.options button');
       buttons.forEach(btn => btn.disabled = true);
 
       // 2. Tıklanan butonu görsel olarak işaretle
       const clickedBtn = document.getElementById('btn' + optionKey);
       
-      // Doğru mu yanlış mı kontrolü
       const isCorrect = (fb.type === "correct");
 
       if (isCorrect) {
         clickedBtn.classList.add('selected-correct');
-        clickedBtn.innerHTML += "  (Doğru Cevap)"; // İsteğe bağlı: Buton içine yazı ekleme
+        clickedBtn.innerHTML += "  (Doğru Cevap)";
       } else {
         clickedBtn.classList.add('selected-wrong');
-        clickedBtn.innerHTML += "  (Cevabınız)"; // İsteğe bağlı
+        clickedBtn.innerHTML += "  (Cevabınız)";
       }
 
       // 3. Feedback Alanını Hazırla
@@ -211,30 +217,51 @@
       const fbTitle = document.getElementById('feedbackTitle');
       const fbText = document.getElementById('feedbackText');
 
-      // İçeriği doldur
-      fbText.textContent = fb.message;
+      // İçeriği temizle
+      fbText.innerHTML = "";
 
       if (isCorrect) {
+        // --- DOĞRU CEVAP: YEŞİL KUTU, MAVİ YAZI ---
         fbTitle.textContent = "Doğru Yanıt!";
-        fbTitle.style.color = "#2e7d32";
-        fbArea.className = "status-correct"; // Yeşil kenar çizgisi için
-        fbArea.style.backgroundColor = "#e8f5e9";
-        fbArea.style.borderColor = "#c8e6c9";
+        fbTitle.style.color = "#2e7d32"; // Yeşil Başlık
+        
+        fbArea.className = "status-correct";
+        
+        // Mavi metin
+        fbText.innerHTML = `<span style="color: #0277bd;">${fb.message}</span>`;
+
       } else {
+        // --- YANLIŞ CEVAP: KIRMIZI KUTU, TURUNCU/SİYAH AYRIMLI YAZI ---
         fbTitle.textContent = "Yanlış Yanıt!";
-        fbTitle.style.color = "#c62828";
-        fbArea.className = "status-wrong"; // Kırmızı kenar çizgisi için
-        fbArea.style.backgroundColor = "#ffebee";
-        fbArea.style.borderColor = "#ffcdd2";
+        fbTitle.style.color = "#c62828"; // Kırmızı Başlık
+        
+        fbArea.className = "status-wrong";
+
+        // Metni \n\n (iki satır) karakterinden böl
+        const parts = fb.message.split("\n\n");
+
+        if (parts.length > 1) {
+            // 1. Kısım: Duyuşsal -> Turuncu
+            const affectiveSpan = `<div style="color: #ef6c00; margin-bottom: 8px;">${parts[0]}</div>`;
+            
+            // 2. Kısım: Bilişsel (Emoji ile başlayan) -> Siyah
+            // Geri kalan her şeyi birleştir (paragraflar varsa)
+            const cognitiveText = parts.slice(1).join("<br><br>"); 
+            const cognitiveSpan = `<div style="color: #333;">${cognitiveText}</div>`;
+            
+            fbText.innerHTML = affectiveSpan + cognitiveSpan;
+        } else {
+            // Eğer bölünemiyorsa (format hatası varsa) varsayılan olarak turuncu bas
+            fbText.innerHTML = `<span style="color: #ef6c00;">${fb.message}</span>`;
+        }
       }
 
-      // Alanı göster
       fbArea.style.display = "block";
 
       // 4. Sonraki Soru butonunu göster
       document.getElementById('nextButtonContainer').style.display = "block";
 
-      // 5. Log kaydı (Değişmedi)
+      // 5. Log kaydı
       saveLog(optionKey, fb.type);
     }
 
